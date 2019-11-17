@@ -1,0 +1,3 @@
+BITS = 8
+DEPTH = 2**BITS
+xFF = DEPTH - 1
