@@ -14,7 +14,8 @@ def display(axes, target_chromas, xs, ys, colors):
 
 
 class ArcDict:
-    """We want to look at hue-arcs of possibilities, rather than individual colors"""
+    """We want to look at hue-arcs of possibilities and select colors from them.
+    `ArcDict` displays a range of contiguous keys as a single arc"""
     def __init__(self, vals, resolution):
         self._res = resolution
         self._vals = vals
@@ -39,6 +40,8 @@ class ArcDict:
             return self._vals[best_key]
     
     def __repr__(self):
+        if not self._list:
+            return 'ArcDict({})'
         intervals = [[self._list[0], self._list[0]]]
         for key in self._list:
             if key > intervals[-1][1] + self._res * 2:
