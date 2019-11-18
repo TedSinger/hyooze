@@ -47,7 +47,7 @@ def ciecam02_brightness_planes(office, brightnesses, target_chromas):
     fig = pyplot.figure(figsize=(12,12))
     for i, brightness in enumerate(brightnesses):
         mymesh = mesh.EqualBrightnessMesh.get(brightness)
-        mymesh.compute()
+        mymesh.compute(4)
         axes = fig.add_subplot((len(brightnesses)+1//2), 2, i+1)
         axes.set_aspect('equal')
         brightness_mask, chroma_masks = mesh.get_masks(mymesh.mesh, brightness, target_chromas)

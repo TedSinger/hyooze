@@ -6,6 +6,19 @@ from hyooze.perception import BRIGHT_OFFICE
 import xarray as xr
 from collections import namedtuple, OrderedDict
 
+MESH_DEFAULTS = OrderedDict([
+    ('computed', False),
+    ('best_green', 0),
+    ('low_green', 0),
+    ('high_green', 0),
+    ('chroma', 0.0),
+    ('brightness', 0.0),
+    ('hue', 0.0),
+    ('x', 0.0),
+    ('y', 0.0),
+    ('hexcode', '#000000'),
+])
+
 def find_green(office, target_brightness, red, blue, lo=0, hi=xFF):
     assert lo <= hi
     assert red != DEPTH
@@ -30,20 +43,7 @@ def find_green(office, target_brightness, red, blue, lo=0, hi=xFF):
     hexcode = sRGBColor(red, best, blue, is_upscaled=True).get_rgb_hex()
     return (True, best, lo, hi, c, b, h, x, y, hexcode)
 
-MESH_DEFAULTS = OrderedDict([
-    ('computed', False),
-    ('best_green', 0),
-    ('low_green', 0),
-    ('high_green', 0),
-    ('chroma', 0.0),
-    ('brightness', 0.0),
-    ('hue', 0.0),
-    ('x', 0.0),
-    ('y', 0.0),
-    ('hexcode', '#000000'),
-])
 
-MESHES = {}
 
 class EqualBrightnessMesh:
     def __init__(self, office, target_brightness):
@@ -67,11 +67,12 @@ class EqualBrightnessMesh:
                 new_value = find_green(self.office, self.brightness, r, b)
                 self._set(r, b, new_value)
 
+    _MESHES = {}
     @classmethod
     def get(cls, b):
-        if b not in MESHES:
-            MESHES[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
-        return MESHES[b]
+        if b not in cls._MESHES:
+            cls._MESHES[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
+        return cls._MESHES[b]
         
     def _get_green_bounds(self, red, blue):
         """To reduce the number of calls to office.rgb_to_cbh, we use the endpoints of
@@ -89,9 +90,9 @@ class EqualBrightnessMesh:
             self._set(red, blue, new_value)
         return self.mesh.isel(red=red, blue=blue)
     
-    def compute(self):
-        for red in range(0, DEPTH, 4):
-            for blue in range(0, DEPTH, 4):
+    def compute(self, resolution):
+        for red in range(0, DEPTH, resolution):
+            for blue in range(0, DEPTH, resolution):
                 self._get_green_bounds(red, blue)
 
 def _clamp(idx):
