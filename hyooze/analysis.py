@@ -3,27 +3,21 @@ import bisect
 from matplotlib import pyplot
 import numpy
 
-def display(axes, target_chromas, xs, ys, colors):
-    for chroma in target_chromas:
-        axes.plot(
-            chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)),
-            chroma * numpy.sin(numpy.arange(0, 6.28, 0.01)),
-            color='black'
-        )
-    axes.scatter(xs,ys,c=colors, marker='.')
-
 
 class ArcDict:
     """We want to look at hue-arcs of possibilities and select colors from them.
-    `ArcDict` displays a range of contiguous keys as a single arc"""
+    `ArcDict` displays a range of contiguous keys as a single arc
+    This does not account for the discontinuity at 0/360
+    """
+
     def __init__(self, vals, resolution):
         self._res = resolution
         self._vals = vals
         self._list = sorted(vals.keys())
-    
+
     def __getitem__(self, needle):
         insertion_point = bisect.bisect(self._list, needle)
-        
+
         if not self._list:
             raise KeyError(needle)
         elif insertion_point == 0:
@@ -38,35 +32,59 @@ class ArcDict:
             raise KeyError(needle)
         else:
             return self._vals[best_key]
-    
+
     def __repr__(self):
         if not self._list:
-            return 'ArcDict({})'
+            return "ArcDict({})"
         intervals = [[self._list[0], self._list[0]]]
         for key in self._list:
             if key > intervals[-1][1] + self._res * 2:
                 intervals.append([key, key])
             else:
                 intervals[-1][1] = key
-        key_to_str = lambda k: f'{round(k, 1)}: {self._vals[k]}'
-        
-        strs = [f'[{key_to_str(low)}]' if low == high else f'[{key_to_str(low)}, {key_to_str(high)}]' for [low, high] in intervals]
-        range_text = ', '.join(strs)
-        return f'ArcDict({range_text})'
+        key_to_str = lambda k: f"{round(k, 1)}: {self._vals[k]}"
+
+        strs = [
+            f"[{key_to_str(low)}]"
+            if low == high
+            else f"[{key_to_str(low)}, {key_to_str(high)}]"
+            for [low, high] in intervals
+        ]
+        range_text = ", ".join(strs)
+        return f"ArcDict({range_text})"
+
+
+def display(axes, target_chromas, xs, ys, colors):
+    for chroma in target_chromas:
+        axes.plot(
+            chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)),
+            chroma * numpy.sin(numpy.arange(0, 6.28, 0.01)),
+            color="black",
+        )
+    axes.scatter(xs, ys, c=colors, marker=".")
 
 
 def ciecam02_brightness_planes(office, brightnesses, target_chromas):
     matches = {}
-    fig = pyplot.figure(figsize=(12,12))
+    fig = pyplot.figure(figsize=(12, 12))
     for i, brightness in enumerate(brightnesses):
         mymesh = mesh.EqualBrightnessMesh.get(brightness)
         mymesh.compute(4)
-        axes = fig.add_subplot((len(brightnesses)+1//2), 2, i+1)
-        axes.set_aspect('equal')
-        brightness_mask, chroma_masks = mesh.get_masks(mymesh.mesh, brightness, target_chromas)
-        xs, ys, hexcodes = mesh.get_colors_by_mask(mymesh.mesh, brightness_mask, ['x', 'y', 'hexcode'])
+        axes = fig.add_subplot((len(brightnesses) + 1 // 2), 2, i + 1)
+        axes.set_aspect("equal")
+        brightness_mask, chroma_masks = mesh.get_masks(
+            mymesh.mesh, brightness, target_chromas
+        )
+        xs, ys, hexcodes = mesh.get_colors_by_mask(
+            mymesh.mesh, brightness_mask, ["x", "y", "hexcode"]
+        )
         display(axes, target_chromas, xs, ys, hexcodes)
-        matches[brightness] = dict([(chroma, mesh.get_colors_by_mask(mymesh.mesh, mask, ['hue', 'hexcode'])) for chroma, mask in chroma_masks.items()])
-    
+        matches[brightness] = dict(
+            [
+                (chroma, mesh.get_colors_by_mask(mymesh.mesh, mask, ["hue", "hexcode"]))
+                for chroma, mask in chroma_masks.items()
+            ]
+        )
+
     return matches, fig
-    
+
