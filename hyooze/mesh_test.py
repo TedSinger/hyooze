@@ -4,16 +4,16 @@ from hyooze import xFF
 import random
 
 def test_find_green_sanity():
-    assert find_green(BRIGHT_OFFICE, 0, 0, 0)[2] == 0
-    assert find_green(BRIGHT_OFFICE, 1000, 0, 0)[2] == xFF
-    assert find_green(BRIGHT_OFFICE, 0, xFF, xFF)[2] == 0
-    assert find_green(BRIGHT_OFFICE, 1000, xFF, xFF)[2] == xFF
+    assert find_green(BRIGHT_OFFICE, 0, 0, 0)[1] == 0
+    assert find_green(BRIGHT_OFFICE, 1000, 0, 0)[1] == xFF
+    assert find_green(BRIGHT_OFFICE, 0, xFF, xFF)[1] == 0
+    assert find_green(BRIGHT_OFFICE, 1000, xFF, xFF)[1] == xFF
 
 def test_find_green_accuracy():
     target_brightness = random.randint(0, 120)
     red = random.randint(0, 255)
     blue = random.randint(0, 255)
-    best_green = find_green(BRIGHT_OFFICE, target_brightness, red, blue)[2]
+    best_green = find_green(BRIGHT_OFFICE, target_brightness, red, blue)[1]
     _, this_brightness, _ = BRIGHT_OFFICE.rgb_to_cbh(red, best_green, blue)
     if best_green < xFF:
         other_green = best_green + 1

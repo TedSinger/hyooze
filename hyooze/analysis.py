@@ -50,7 +50,10 @@ def ciecam02_brightness_planes(office, brightnesses, target_chromas):
         mymesh.compute()
         axes = fig.add_subplot((len(brightnesses)+1//2), 2, i+1)
         axes.set_aspect('equal')
-        matches[brightness] = mesh.display_brightness_level(mymesh.mesh, axes, brightness, target_chromas)
+        brightness_mask, chroma_masks = mesh.get_masks(mymesh.mesh, brightness, target_chromas)
+        xs, ys, hexcodes = mesh.get_colors_by_mask(mymesh.mesh, brightness_mask, ['x', 'y', 'hexcode'])
+        mesh.display(axes, target_chromas, xs, ys, hexcodes)
+        matches[brightness] = dict([(chroma, mesh.get_colors_by_mask(mymesh.mesh, mask, ['hue', 'hexcode'])) for chroma, mask in chroma_masks.items()])
     
     return matches, fig
     
