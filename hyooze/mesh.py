@@ -1,5 +1,4 @@
 from colormath.color_objects import sRGBColor
-import numpy
 import math
 from hyooze import DEPTH, xFF
 from hyooze.perception import BRIGHT_OFFICE
@@ -19,7 +18,7 @@ MESH_DEFAULTS = OrderedDict([
     ('hexcode', '#000000'),
 ])
 
-def find_green(office, target_brightness, red, blue, lo=0, hi=xFF):
+def _nearest_green(office, target_brightness, red, blue, lo=0, hi=xFF):
     assert lo <= hi
     assert red != DEPTH
     assert blue != DEPTH
@@ -38,20 +37,27 @@ def find_green(office, target_brightness, red, blue, lo=0, hi=xFF):
     else:
         best, c, b, h = hi, c1, b1, h1
     theta = h * math.pi / 180
-    x = c * numpy.cos(theta)
-    y = c * numpy.sin(theta)
+    x = c * math.cos(theta)
+    y = c * math.sin(theta)
     hexcode = sRGBColor(red, best, blue, is_upscaled=True).get_rgb_hex()
     return (True, best, lo, hi, c, b, h, x, y, hexcode)
 
 
 
 class EqualBrightnessMesh:
+    _MESHES = {}
+    @classmethod
+    def get(cls, b):
+        if b not in cls._MESHES:
+            cls._MESHES[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
+        return cls._MESHES[b]
+
     def __init__(self, office, target_brightness):
         self.office = office
         self.brightness = target_brightness
-        das = dict((measure, (['red', 'blue'], [[default]*DEPTH]*DEPTH)) 
+        measures = dict((measure, (['red', 'blue'], [[default]*DEPTH]*DEPTH)) 
                 for measure, default in MESH_DEFAULTS.items())
-        self.mesh = xr.Dataset(das, 
+        self.mesh = xr.Dataset(measures, 
             coords={'red':list(range(DEPTH)), 
                     'blue':list(range(DEPTH))})
         
@@ -64,16 +70,9 @@ class EqualBrightnessMesh:
     def _init_corners(self):
         for r in [0, xFF]:
             for b in [0, xFF]:
-                new_value = find_green(self.office, self.brightness, r, b)
+                new_value = _nearest_green(self.office, self.brightness, r, b)
                 self._set(r, b, new_value)
 
-    _MESHES = {}
-    @classmethod
-    def get(cls, b):
-        if b not in cls._MESHES:
-            cls._MESHES[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
-        return cls._MESHES[b]
-        
     def _get_green_bounds(self, red, blue):
         """To reduce the number of calls to office.rgb_to_cbh, we use the endpoints of
         some interval as bounds on the possible green for the midpoint. Since we want
@@ -85,7 +84,7 @@ class EqualBrightnessMesh:
 
             lo = self._get_green_bounds(high_red, high_blue).low_green
             hi = self._get_green_bounds(low_red, low_blue).high_green
-            new_value = find_green(self.office, self.brightness, red, blue, 
+            new_value = _nearest_green(self.office, self.brightness, red, blue, 
                                          lo=lo, hi=hi)
             self._set(red, blue, new_value)
         return self.mesh.isel(red=red, blue=blue)
@@ -108,6 +107,8 @@ def _get_bounds(red, blue):
     # We want to ensure that 1) most points choose bounds that are close by, and
     # 2) the graph of dependencies is acyclic
     # So we round the least-significant bit from either coordinate both up and down
+    if red in [0, xFF] and blue in [0, xFF]:
+        raise ValueError("0 and xFF should be roots of the dependency graph. Their green values must be computed from the full range.")
     mask = 1
     while ((red == xFF) or (mask & red == 0)) and ((blue == xFF) or (mask & blue == 0)):
         mask = (mask << 1)
@@ -133,12 +134,3 @@ def get_masks(mesh, brightness, chromas, b_tolerance=0.5678, c_tolerance=2.3456)
 def get_colors_by_mask(mesh, mask, attrs):
     return [mesh[a].data[mask] for a in attrs]
 
-
-def display(axes, target_chromas, xs, ys, colors):
-    for chroma in target_chromas:
-        axes.plot(
-            chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)), 
-            chroma * numpy.sin(numpy.arange(0, 6.28, 0.01)),
-            color='black'
-        )
-    axes.scatter(xs,ys,c=colors, marker='.')

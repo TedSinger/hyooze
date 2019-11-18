@@ -1,6 +1,16 @@
 from hyooze import mesh
 import bisect
 from matplotlib import pyplot
+import numpy
+
+def display(axes, target_chromas, xs, ys, colors):
+    for chroma in target_chromas:
+        axes.plot(
+            chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)),
+            chroma * numpy.sin(numpy.arange(0, 6.28, 0.01)),
+            color='black'
+        )
+    axes.scatter(xs,ys,c=colors, marker='.')
 
 
 class ArcDict:
@@ -52,7 +62,7 @@ def ciecam02_brightness_planes(office, brightnesses, target_chromas):
         axes.set_aspect('equal')
         brightness_mask, chroma_masks = mesh.get_masks(mymesh.mesh, brightness, target_chromas)
         xs, ys, hexcodes = mesh.get_colors_by_mask(mymesh.mesh, brightness_mask, ['x', 'y', 'hexcode'])
-        mesh.display(axes, target_chromas, xs, ys, hexcodes)
+        display(axes, target_chromas, xs, ys, hexcodes)
         matches[brightness] = dict([(chroma, mesh.get_colors_by_mask(mymesh.mesh, mask, ['hue', 'hexcode'])) for chroma, mask in chroma_masks.items()])
     
     return matches, fig
