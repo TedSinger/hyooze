@@ -85,5 +85,5 @@ def display(office, brightness, target_chromas, resolution=1):
         hues, hexcodes = get_attrs_by_mask(mymesh.mesh, mask, ["hue", "hexcode"])
         matches[chroma] = dict(zip(hues, hexcodes))
 
-    return matches, get_grey(mymesh.mesh), fig
+    return matches, get_grey(mymesh.mesh)
 
