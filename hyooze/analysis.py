@@ -80,12 +80,10 @@ def display(office, brightness, target_chromas, resolution=1):
     )
     fig = graph(target_chromas, xs, ys, hexcodes)
 
-    matches = dict(
-        [
-            (chroma, get_attrs_by_mask(mymesh.mesh, mask, ["hue", "hexcode"]))
-            for chroma, mask in chroma_masks.items()
-        ]
-    )
+    matches = {}
+    for chroma, mask in chroma_masks.items():
+        hues, hexcodes = get_attrs_by_mask(mymesh.mesh, mask, ["hue", "hexcode"])
+        matches[chroma] = dict(zip(hues, hexcodes))
 
     return matches, get_grey(mymesh.mesh), fig
 
