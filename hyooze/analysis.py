@@ -1,4 +1,4 @@
-from hyooze import mesh
+from hyooze.mesh import EqualBrightnessMesh, get_masks, get_attrs_by_mask, get_grey
 import bisect
 from matplotlib import pyplot
 import numpy
@@ -54,7 +54,10 @@ class ArcDict:
         return f"ArcDict({range_text})"
 
 
-def display(axes, target_chromas, xs, ys, colors):
+def graph(target_chromas, xs, ys, colors):
+    fig = pyplot.figure(figsize=(12, 12))
+    axes = fig.add_subplot(1, 1, 1)
+    axes.set_aspect("equal")
     for chroma in target_chromas:
         axes.plot(
             chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)),
@@ -62,29 +65,27 @@ def display(axes, target_chromas, xs, ys, colors):
             color="black",
         )
     axes.scatter(xs, ys, c=colors, marker=".")
+    return fig
 
 
-def ciecam02_brightness_planes(office, brightnesses, target_chromas):
-    matches = {}
-    fig = pyplot.figure(figsize=(12, 12))
-    for i, brightness in enumerate(brightnesses):
-        mymesh = mesh.EqualBrightnessMesh.get(brightness)
-        mymesh.compute(4)
-        axes = fig.add_subplot((len(brightnesses) + 1 // 2), 2, i + 1)
-        axes.set_aspect("equal")
-        brightness_mask, chroma_masks = mesh.get_masks(
-            mymesh.mesh, brightness, target_chromas
-        )
-        xs, ys, hexcodes = mesh.get_colors_by_mask(
-            mymesh.mesh, brightness_mask, ["x", "y", "hexcode"]
-        )
-        display(axes, target_chromas, xs, ys, hexcodes)
-        matches[brightness] = dict(
-            [
-                (chroma, mesh.get_colors_by_mask(mymesh.mesh, mask, ["hue", "hexcode"]))
-                for chroma, mask in chroma_masks.items()
-            ]
-        )
+def display(office, brightness, target_chromas, resolution=1):
+    mymesh = EqualBrightnessMesh.get(brightness)
+    mymesh.compute(resolution)
 
-    return matches, fig
+    brightness_mask, chroma_masks = get_masks(
+        mymesh.mesh, brightness, target_chromas
+    )
+    xs, ys, hexcodes = get_attrs_by_mask(
+        mymesh.mesh, brightness_mask, ["x", "y", "hexcode"]
+    )
+    fig = graph(target_chromas, xs, ys, hexcodes)
+
+    matches = dict(
+        [
+            (chroma, get_attrs_by_mask(mymesh.mesh, mask, ["hue", "hexcode"]))
+            for chroma, mask in chroma_masks.items()
+        ]
+    )
+
+    return matches, get_grey(mymesh.mesh), fig
 

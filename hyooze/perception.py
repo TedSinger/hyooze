@@ -25,13 +25,11 @@ class Office:
             REFERENCE_WHITE.xyz_x,
             REFERENCE_WHITE.xyz_y,
             REFERENCE_WHITE.xyz_z,
-            c=0.69,
-            n_c=1,
-            f=1,  # I do not know what these parameters mean
+            c=0.69, n_c=1, f=1,  # I do not know what these parameters mean
             l_a=self.ambient_lightness,
             y_b=self.background_brightness,
         )
-        return perception.colorfulness, perception.brightness, perception.hue_angle
+        return perception.chroma, perception.brightness, perception.hue_angle
 
 
 # 100 is a typical bright office. I am (optimistically) assuming that:

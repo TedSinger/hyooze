@@ -7,15 +7,15 @@ from collections import namedtuple, OrderedDict
 
 MESH_DEFAULTS = OrderedDict([
     ('computed', False),
-    ('best_green', 0),
-    ('low_green', 0),
-    ('high_green', 0),
-    ('chroma', 0.0),
-    ('brightness', 0.0),
-    ('hue', 0.0),
-    ('x', 0.0),
-    ('y', 0.0),
-    ('hexcode', '#000000'),
+    ('best_green', -1),
+    ('low_green', 256),
+    ('high_green', -1),
+    ('chroma', float('nan')),
+    ('brightness', float('nan')),
+    ('hue', float('nan')),
+    ('x', float('nan')),
+    ('y', float('nan')),
+    ('hexcode', '#ZZZZZZ'),
 ])
 
 def _nearest_green(office, target_brightness, red, blue, lo=0, hi=xFF):
@@ -29,7 +29,7 @@ def _nearest_green(office, target_brightness, red, blue, lo=0, hi=xFF):
             lo = math.floor(mid)
         else:
             hi = math.ceil(mid)
-
+    # FIXME: there should be an optimization for infeasible colors
     c0, b0, h0 = office.rgb_to_cbh(red, lo, blue)
     c1, b1, h1 = office.rgb_to_cbh(red, hi, blue)
     if abs(b0-target_brightness) < abs(b1-target_brightness):
@@ -94,8 +94,10 @@ class EqualBrightnessMesh:
             for blue in range(0, DEPTH, resolution):
                 self._get_green_bounds(red, blue)
 
+
 def _clamp(idx):
     return min(idx, xFF)
+
 
 def _get_bounds(red, blue):
     """
@@ -121,9 +123,9 @@ def _get_bounds(red, blue):
     return low_red, low_blue, _clamp(high_red), _clamp(high_blue)
 
 
-
-def get_masks(mesh, brightness, chromas, b_tolerance=0.5678, c_tolerance=2.3456):
+def get_masks(mesh, brightness, chromas, b_tolerance=0.5678, c_tolerance=1.3456):
     matching_brightness = abs(mesh.brightness - brightness) < b_tolerance
+    
     matching_chromas = dict(
         [(c, (abs(mesh.chroma - c) < c_tolerance) & matching_brightness) for c in chromas]
     )
@@ -131,6 +133,10 @@ def get_masks(mesh, brightness, chromas, b_tolerance=0.5678, c_tolerance=2.3456)
     return matching_brightness, matching_chromas
 
 
-def get_colors_by_mask(mesh, mask, attrs):
+def get_attrs_by_mask(mesh, mask, attrs):
     return [mesh[a].data[mask] for a in attrs]
 
+
+def get_grey(mesh):
+    n = mesh.chroma.argmin()
+    return mesh.hexcode.item(n.item(0))
