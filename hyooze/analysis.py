@@ -54,20 +54,21 @@ class ArcDict:
         return f"ArcDict({range_text})"
 
 
-def graph(target_chromas, xs, ys, colors):
+def graph(target_chromas, xs, ys, colors, background):
     fig = pyplot.figure(figsize=(12, 12))
     axes = fig.add_subplot(1, 1, 1)
+    axes.set_facecolor(background)
     axes.set_aspect("equal")
     axes.get_xaxis().set_visible(False)
     axes.get_yaxis().set_visible(False)
     axes.autoscale(enable=True)
-    axes.scatter(xs, ys, c=colors, marker=".")
+    axes.scatter(xs, ys, c=colors, marker="o")
     axes.autoscale(enable=False)
     for chroma in target_chromas:
         axes.plot(
-            chroma * numpy.cos(numpy.arange(0, 6.28, 0.01)),
-            chroma * numpy.sin(numpy.arange(0, 6.28, 0.01)),
-            color="black",
+            chroma * numpy.cos(numpy.arange(0, 6.29, 0.01)),
+            chroma * numpy.sin(numpy.arange(0, 6.29, 0.01)),
+            color="black" if background > '#88' else 'white',
         )
     return fig
 
@@ -82,9 +83,10 @@ def display(office, brightness, target_chromas, resolution=1):
     xs, ys, hexcodes = get_attrs_by_mask(
         mymesh.mesh, brightness_mask, ["x", "y", "hexcode"]
     )
-    graph(target_chromas, xs, ys, hexcodes)
+    grey = get_grey(mymesh.mesh)
+    graph(target_chromas, xs, ys, hexcodes, grey)
 
-    matches = {0: ArcDict({0:get_grey(mymesh.mesh)}, 0)}
+    matches = {0: ArcDict({0:grey}, 0)}
     for chroma, mask in chroma_masks.items():
         hues, hexcodes = get_attrs_by_mask(mymesh.mesh, mask, ["hue", "hexcode"])
         matches[chroma] = ArcDict(dict(zip(hues, hexcodes)), resolution=resolution*4)
