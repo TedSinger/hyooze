@@ -29,13 +29,22 @@ def _nearest_green(office, target_brightness, red, blue, lo=0, hi=xFF):
             lo = math.floor(mid)
         else:
             hi = math.ceil(mid)
-    # FIXME: there should be an optimization for infeasible colors
-    c0, b0, h0 = office.rgb_to_cbh(red, lo, blue)
-    c1, b1, h1 = office.rgb_to_cbh(red, hi, blue)
-    if abs(b0-target_brightness) < abs(b1-target_brightness):
-        best, c, b, h = lo, c0, b0, h0
+
+    c_lo, b_lo, h_lo = office.rgb_to_cbh(red, lo, blue)
+    if lo == hi:
+        c_hi, b_hi, h_hi = c_lo, b_lo, h_lo
     else:
-        best, c, b, h = hi, c1, b1, h1
+        c_hi, b_hi, h_hi = office.rgb_to_cbh(red, hi, blue)
+
+    if b_lo > target_brightness:
+        hi = lo
+    elif b_hi < target_brightness:
+        lo = hi
+
+    if abs(b_lo-target_brightness) < abs(b_hi-target_brightness):
+        best, c, b, h = lo, c_lo, b_lo, h_lo
+    else:
+        best, c, b, h = hi, c_hi, b_hi, h_hi
     theta = h * math.pi / 180
     x = c * math.cos(theta)
     y = c * math.sin(theta)
