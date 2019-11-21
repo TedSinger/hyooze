@@ -1,7 +1,6 @@
 from colormath.color_objects import sRGBColor
 import math
 from hyooze import DEPTH, xFF
-from hyooze.perception import BRIGHT_OFFICE
 import xarray as xr
 from collections import namedtuple, OrderedDict
 
@@ -54,13 +53,6 @@ def _nearest_green(office, target_brightness, red, blue, lo=0, hi=xFF):
 
 
 class EqualBrightnessMesh:
-    _MESHES = {}
-    @classmethod
-    def get(cls, b):
-        if b not in cls._MESHES:
-            cls._MESHES[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
-        return cls._MESHES[b]
-
     def __init__(self, office, target_brightness):
         self.office = office
         self.brightness = target_brightness

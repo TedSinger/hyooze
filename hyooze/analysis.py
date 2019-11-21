@@ -73,8 +73,8 @@ def graph(target_chromas, xs, ys, colors, background):
     return fig
 
 
-def display(office, brightness, target_chromas, resolution=1):
-    mymesh = EqualBrightnessMesh.get(brightness)
+def display(office, brightness=None, target_chromas=None, resolution=1):
+    mymesh = office.getMesh(brightness)
     mymesh.compute(resolution)
 
     brightness_mask, chroma_masks = get_masks(
