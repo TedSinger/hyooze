@@ -1,0 +1,6 @@
+cache.db
+cache-full-precision.db
+ciecam02_colors.db
+.ipynb_checkpoints
+.vscode
+**/__pycache__
