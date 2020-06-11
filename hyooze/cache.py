@@ -1,5 +1,8 @@
 import sqlite3
 
+# FIXME: drop the floats from the view, but rename cbh columns to 'chroma_619' and such
+# hue range should be +/- 32728/180
+
 INIT = '''
 create table if not exists __color (
     red unsigned int1 not null,
