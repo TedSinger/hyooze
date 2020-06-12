@@ -26,7 +26,9 @@ def relative_luminance(r,g,b):
     return rl + 0.05
 
 def get_greys(conn):
-    return conn.execute('select red, green, blue, hexcode from color_view where max(red, green, blue) - min(red,green,blue) <= 1').fetchall()
+    q = '''select red, green, blue, hexcode from color_view
+        where max(red, green, blue) - min(red,green,blue) <= 1'''
+    return conn.execute(q).fetchall()
 
 def fit_greys_between(n, low, high, conn):
     low_rl = relative_luminance(*unhexcode(low))
