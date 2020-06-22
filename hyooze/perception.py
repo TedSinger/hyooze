@@ -1,8 +1,6 @@
 from colormath.color_objects import sRGBColor, XYZColor
 from colormath.color_conversions import convert_color
 from colormath.color_appearance_models import CIECAM02
-from hyooze import xFF, DEPTH
-from hyooze.mesh import EqualBrightnessMesh
 
 REFERENCE_WHITE = convert_color(sRGBColor(1, 1, 1), XYZColor)
 
@@ -33,11 +31,6 @@ class Office:
             y_b=self.background_brightness,
         )
         return perception.chroma, perception.brightness, perception.hue_angle
-
-    def getMesh(self, b):
-        if b not in self._mesh_cache:
-            self._mesh_cache[b] = EqualBrightnessMesh(BRIGHT_OFFICE, b)
-        return self._mesh_cache[b]
 
 
 # 100 is a typical bright office. I am (optimistically) assuming that:

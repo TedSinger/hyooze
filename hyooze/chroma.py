@@ -9,14 +9,16 @@ def chroma_extremes_for_brightness(target_brightness, conn):
     corner_chromas = []
     for edge in edges:
         brightness, chroma, hexcode = conn.execute(f'select brightness, chroma, hexcode from color_view where {edge} order by abs(brightness - {target_brightness}) asc limit 1').fetchone()
+        # FIXME: ah, this 0.01 is hiding multiple places
         if abs(brightness - target_brightness) / target_brightness < 0.01:
             corner_chromas.append(chroma)
-
+    # FIXME: also return the brightness range of these, for use in the chroma_ring
     return corner_chromas
 
 def _keyFn(chroma_extremes):
+    # why am i picking the chroma level so early? can i try all of them?
     def _keyFn(chroma_level):
-        return sum([(chroma - chroma_level * math.floor(chroma / chroma_level))**2 for chroma in chroma_extremes])
+        return sum([abs(chroma - chroma_level * math.floor(chroma / chroma_level)) for chroma in chroma_extremes])
     return _keyFn
 
 # FIXME: what the heck is a ring?
@@ -29,6 +31,6 @@ def chroma_ring_size(chroma_extremes):
 
 def chroma_ring(brightness_target, chroma_target, conn):
     return conn.execute('''select chroma, hue, hexcode from color_view where
-      (brightness between ? - 100 and ? + 100) and (chroma between ? - 100 and ? + 100) limit 200''', 
+      (brightness between ? * 0.99 and ? * 1.01) and (chroma between ? * 0.99 and ? * 1.01)''', 
         [brightness_target, brightness_target, chroma_target, chroma_target]
        ).fetchall()

@@ -1,0 +1,31 @@
+
+Basic Ergonomic Colors
+
+Here is a small palette of colors in groups of consistent brightnesses, with subgroups of consistent chromas:
+
+
+
+By picking colors across brightness groups, you get a consistent contrast ratio. High contrast ratios make text legible. Readability counts!
+
+By picking colors of different chromas in the same brightness group, you can easily create an <a href=https://colorusage.arc.nasa.gov/Percept_layers_1.php>attention hierarchy</a> without sacrificing contrast ratio unexpectedly.
+
+By picking colors of different hue in the same brightness+chroma group, you can add boundary hints (such as syntax highlighting or zebra striping) without interfering with the attention hierarchy or contrast ratio.
+
+This was tricky! Equal spacing in RGB or HSL does the wrong thing. The brightness and chroma perceptual correlates are totally unaligned with the RGB colorspace, and not consistently correlated with HSL or any other computer-and-mathematics-friendly colorspace:
+
+Lime (#00FF00, HSL(120, 100%, 50%)) on Blue (#0000FF, HSL(240, 100%, 50%))
+is quite readable, even though the HSL lightness is the same.
+
+The green in our RGB monitors is much brighter (perceptually, if not physically) than the red or blue. This is why the above table is missing bright saturated red and blue. Those colors just aren't possible on our displays under normal calibration.
+
+The shape of the RGB color gamut in a perceptually uniform space* is complicated. But mathematically, our problem is straightforward. We want contours of equal chroma on contours of equal brightness.
+
+
+
+
+* I chose CIECAM02, but ideally would have a model for luminous colors instead of dyes. More pressing, I think, is a model that incorporates the H-K effect - those blue peninsulas are quite prominent.
+
+    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2659800/
+    https://www.jstage.jst.go.jp/article/transfun/E100.A/2/E100.A_565/_article
+    https://www.osapublishing.org/josaa/fulltext.cfm?uri=josaa-35-12-2000&id=401230
+

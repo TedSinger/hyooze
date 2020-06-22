@@ -1,11 +1,13 @@
 from minizinc import Instance, Model, Solver
+import os
 
 def _fit_hues(arc, n):
     if n == 1 or len(arc) == 1:
         return [arc[0]], 0
     else:
         gecode = Solver.lookup('gecode')
-        m = Model('hue_fitting.mzn')
+        mzn_path = os.path.join(os.path.dirname(__file__), 'hue_fitting.mzn')
+        m = Model(mzn_path)
         i = Instance(gecode, m)
         i["nHues"] = n
         i["available_hue"] = set(arc)
