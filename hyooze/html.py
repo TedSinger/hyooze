@@ -1,7 +1,7 @@
 
 def color_to_td_pair(color):
-    td = '''<td style='color: {fg}; background-color: {bg}; text-rendering: optimizeLegibility; line-height:0; margin:0; font-weight: bold; font-size: x-large; font-family: monospace;'>{text}</td>'''
-    return td.format(fg=color, bg='#f4f5f4', text=color) + td.format(fg="#000000", bg=color, text=color)
+    td = '''<td style='color: {fg}; background-color: {bg}; text-rendering: optimizeLegibility;  margin:0; font-weight: bold; font-size: x-large; font-family: monospace;'>{text}</td>'''
+    return td.format(fg=color, bg='#ffffff', text=color) + td.format(fg="#000000", bg=color, text=color)
     
 def brightness_group_to_rows(brightness):
     ret = ''
@@ -14,9 +14,9 @@ def brightness_group_to_rows(brightness):
     return ret
 
 def demo(brightnesses):
-    rows = list(map(brightness_group_to_rows, brightnesses))
-    rows = ''.join(rows)
-    return f'''<table>{rows}</table>'''
+    
+    return f'''<table>{brightness_group_to_rows(brightnesses)}</table>'''
+
 
 LIME_ON_BLUE = f'''<text style='font-weight: bold; color: HSL(120, 100%, 50%); background-color: HSL(240, 100%, 50%);'>
 Lime (#00FF00, HSL(120, 100%, 50%)) on Blue (#0000FF, HSL(240, 100%, 50%))<br>

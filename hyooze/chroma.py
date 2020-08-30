@@ -1,36 +1,20 @@
 import math
 SUBPIXELS = ('red','green','blue')
 
-def chroma_extremes_for_brightness(target_brightness, conn):
-    edges = [f'({c1} = {c1b}) and ({c2} = {c2b})' for c1 in SUBPIXELS 
-        for c2 in SUBPIXELS if c1 > c2 
-        for c1b in [0,255] 
-        for c2b in [0,255]]
-    corner_chromas = []
-    for edge in edges:
-        brightness, chroma, hexcode = conn.execute(f'select brightness, chroma, hexcode from color_view where {edge} order by abs(brightness - {target_brightness}) asc limit 1').fetchone()
-        # FIXME: ah, this 0.01 is hiding multiple places
-        if abs(brightness - target_brightness) / target_brightness < 0.01:
-            corner_chromas.append(chroma)
-    # FIXME: also return the brightness range of these, for use in the chroma_ring
-    return corner_chromas
+def max_chroma_boundary(target_brightness, conn):
+    faces = [f'({c1} = 0 or {c1} = 255)' for c1 in SUBPIXELS]
+    sides = []
+    for face in faces:
+        sides.extend(conn.execute(
+            f'select chroma, hue from color_view where {face} and (brightness between ? * 0.99 and ? * 1.01)', [target_brightness, target_brightness]
+        ).fetchall())
+    return sorted(sides, key=lambda chroma_hue: chroma_hue[1])
 
-def _keyFn(chroma_extremes):
-    # why am i picking the chroma level so early? can i try all of them?
-    def _keyFn(chroma_level):
-        return sum([abs(chroma - chroma_level * math.floor(chroma / chroma_level)) for chroma in chroma_extremes])
-    return _keyFn
-
-# FIXME: what the heck is a ring?
-
-def chroma_ring_size(chroma_extremes):
-    max_chroma = max(chroma_extremes)
-    candidates = [c_e / n for c_e in chroma_extremes for n in (1,2,3)]
-    candidates = [c for c in candidates if 12000 < c < 20000 and max_chroma / 5 < c]
-    return max(candidates, key=_keyFn(chroma_extremes))
-
-def chroma_ring(brightness_target, chroma_target, conn):
-    return conn.execute('''select chroma, hue, hexcode from color_view where
-      (brightness between ? * 0.99 and ? * 1.01) and (chroma between ? * 0.99 and ? * 1.01)''', 
-        [brightness_target, brightness_target, chroma_target, chroma_target]
-       ).fetchall()
+def chroma_area(boundary):
+    area = 0
+    for i in range(-1, len(boundary)-1):
+        chroma_0, hue_0 = boundary[i]
+        chroma_1, hue_1 = boundary[i+1]
+        angle = ((hue_1 - hue_0) * math.pi / 18000) % (2 *math.pi)
+        area += (chroma_0 ** 2 + chroma_1 ** 2) * angle / 4  # good enough when angle is small
+    return area
