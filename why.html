@@ -1,31 +1,42 @@
 
-Basic Ergonomic Colors
+<h1>Basic Ergonomic Colors</h1>
 
-Here is a small palette of colors in groups of consistent brightnesses, with subgroups of consistent chromas:
+Here is a palette of colors in groups of equal brightness, with a variety of chromas and hues:
+{palette}
 
+<h2>Why does this matter?</h2>
+Brightness is the only aspect of color that affects the legibility of text, but it is difficult to calculate. With this palette, an application designer can change colors for other concerns without risking a loss of legibility. Poor legibility causes reading to be inaccurate, uncomfortable, and slow. Casual users will become frustrated and give up. Dedicated users will perservere, but make avoidable mistakes.
 
-
-By picking colors across brightness groups, you get a consistent contrast ratio. High contrast ratios make text legible. Readability counts!
-
-By picking colors of different chromas in the same brightness group, you can easily create an <a href=https://colorusage.arc.nasa.gov/Percept_layers_1.php>attention hierarchy</a> without sacrificing contrast ratio unexpectedly.
-
-By picking colors of different hue in the same brightness+chroma group, you can add boundary hints (such as syntax highlighting or zebra striping) without interfering with the attention hierarchy or contrast ratio.
-
-This was tricky! Equal spacing in RGB or HSL does the wrong thing. The brightness and chroma perceptual correlates are totally unaligned with the RGB colorspace, and not consistently correlated with HSL or any other computer-and-mathematics-friendly colorspace:
-
-Lime (#00FF00, HSL(120, 100%, 50%)) on Blue (#0000FF, HSL(240, 100%, 50%))
-is quite readable, even though the HSL lightness is the same.
-
-The green in our RGB monitors is much brighter (perceptually, if not physically) than the red or blue. This is why the above table is missing bright saturated red and blue. Those colors just aren't possible on our displays under normal calibration.
-
-The shape of the RGB color gamut in a perceptually uniform space* is complicated. But mathematically, our problem is straightforward. We want contours of equal chroma on contours of equal brightness.
+<aside style="background-color: yellow; color: black;">Warning: Your data has not been saved</aside>
 
 
+- Building an <a href=https://colorusage.arc.nasa.gov/Percept_layers_1.php>attention hierarchy</a>
+- Conveying semantic meaning 
+- Adding boundary hints (zebra striping, syntax highlightning)
+- Providing non-spatial grouping (parameters)
+
+<h2>Why is brightness hard to compute?</h2>
+Most computer monitors have a red, a green, and a blue rectangular subpixel in each square pixel. Each of these can be activated to any level from 0 through 255. The RGB colorspace corresponds to this mechanical detail. A hexadecimal color code like #0080FF represents zero activation of red, 128 (from the 80 in hexadecimal) activation of green, and 255 (from the FF in hexadecimal) activation of blue.
+
+While useful for the computer, this colorspace doesn't correspond to any aspect of human perception. 
+<text style="font-weight: bold; color: #00FF00; background-color: #0000FF;">
+    Lime (#00FF00) is much brighter than Blue (#0000FF)
+</text>
+, which is surprising from the hexcodes in isolation. We are not interested in physical intensity of light, but in brightness as a "perceptual correlate". Perceptual correlates are derived from experimental data (participants are asked to judge which of two colors are brighter or which is more muted, for example). Color scientists write as clear and intuitive models as they can to fit the data, but the underlying system is biological and variable. The resulting math is opaque, at best.
+
+Fortunately, the hard work has already been done by a library <a href=https://python-colormath.readthedocs.io/en/latest/index.html>python-colormath</a>*. Using that, we can convert the RGB color gamut into a perceptually uniform space**. From there, we have a straightforward optimization problem.
+
+We want large and predictable contrast ratios***. Our colors will be on contours of equal brightness, which are spaced evenly on a logarithmic scale. This way, the constrast ratio of any two colors in our palette is the number of brightness contours between them.
+
+We want a broad palette of chromas and hues. Within each brightness contour, our colors should be spaced out with many saturated colors and some muted colors.
 
 
-* I chose CIECAM02, but ideally would have a model for luminous colors instead of dyes. More pressing, I think, is a model that incorporates the H-K effect - those blue peninsulas are quite prominent.
+<!-- notes -->
+* This library is unmaintained! If you find it (or this page) useful, please consider sponsoring a temporary maintainer!
+** I chose CIECAM02, but ideally would have a model for luminous colors instead of dyes.
 
     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2659800/
     https://www.jstage.jst.go.jp/article/transfun/E100.A/2/E100.A_565/_article
     https://www.osapublishing.org/josaa/fulltext.cfm?uri=josaa-35-12-2000&id=401230
 
+*** Contrast ratio measures the change in brightness between foreground and background, determining how legible a pair of colors is.
