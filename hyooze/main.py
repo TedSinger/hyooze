@@ -2,7 +2,7 @@ from hyooze.cache import get_conn
 from hyooze.brightness import fit_greys_between, grey_to_brightness
 from hyooze.chroma import max_chroma_boundary, chroma_area
 from hyooze.hue import choose_hues
-from hyooze.equal_space import find_happy_neighbors
+from hyooze.equal_space import select_colors
 from matplotlib import pyplot
 import math
 import numpy
@@ -37,8 +37,7 @@ def graph(brightness, hues_by_chroma, conn):
 
 conn = get_conn()
 
-# FIXME: rethink these choices
-greys = ['#202020'] + fit_greys_between(7, '#202020', '#f3f3f3', conn) + ['#f3f3f3'] 
+greys = fit_greys_between(9, '#000000', '#f7f7f6', conn) + ['#f7f7f6']
 
 # {brightness:{chroma:[(hue, hex)]}}
 color_scheme = {}
@@ -49,18 +48,10 @@ for grey in greys:
     }
     print(grey)
     brightness = grey_to_brightness(grey, conn)
-    colors = conn.execute('''select chroma, hue, hexcode from color_view where
-      (brightness between ? * 0.997 and ? * 1.003)''', 
-        [brightness, brightness]).fetchall()
-
-    xs = [((chroma/10000)**0.5) * math.cos(hue * math.pi / 18000) for chroma, hue, _ in colors]
-    ys = [((chroma/10000)**0.5) * math.sin(hue * math.pi / 18000) for chroma, hue, _ in colors]
-    xys = numpy.array([xs, ys])
 
     area = chroma_area(max_chroma_boundary(brightness, conn))
-    indices = find_happy_neighbors(xys, 4 + int(area / 4.5e8))
-    for idx in indices:
-        chroma, hue, hexcode = colors[idx]
+    colors = select_colors(brightness, 4 + int(area / 4.5e8), conn)
+    for chroma, hue, hexcode in colors:
         colors_for_level[chroma] = [(hue, hexcode)]
 
     color_scheme[brightness] = colors_for_level

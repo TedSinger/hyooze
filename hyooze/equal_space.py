@@ -1,10 +1,5 @@
 import numpy
-
-def index_of_grey(xys):
-    square_diffs = numpy.zeros_like(xys)
-    numpy.multiply(xys, xys, out=square_diffs)
-    field = numpy.sum(square_diffs, axis=0)
-    return field.argmin()
+import math
 
 def field_for_neighbor(neighbor, xys):
     square_diffs = numpy.zeros_like(xys)
@@ -22,7 +17,7 @@ def best_replacment(neighbor, xys, whole_field):
     best_neighbor = numpy.argmin(rest_of_field)
     return best_neighbor
 
-def find_happy_neighbors(xys, n):
+def minimum_energy_placement(xys, n):
     '''
     >>> xys = array([[0.1, 0, 1], [0, 0, 1]])
     >>> set(find_happy_neighbors(xys, 2))
@@ -32,8 +27,6 @@ def find_happy_neighbors(xys, n):
     '''
     current = list(range(n))
     whole_field = numpy.sum([field_for_neighbor(neighbor, xys) for neighbor in current], axis=0)
-    # grey = index_of_grey(xys)
-    # whole_field += field_for_neighbor(grey, xys)
     updated = True
     while updated:
         updated = False
@@ -45,4 +38,15 @@ def find_happy_neighbors(xys, n):
                 whole_field = numpy.subtract(whole_field, field_for_neighbor(neighbor, xys), out=whole_field)
                 whole_field = numpy.add(whole_field, field_for_neighbor(replacement, xys), out=whole_field)
                 updated = True
-    return current #+ [grey]
+    return current
+
+def select_colors(brightness, n, conn):
+    colors = conn.execute('''select chroma, hue, hexcode from color_view where
+      (brightness between ? * 0.997 and ? * 1.003)''', 
+        [brightness, brightness]).fetchall()
+
+    xs = [((chroma/10000)**0.5) * math.cos(hue * math.pi / 18000) for chroma, hue, _ in colors]
+    ys = [((chroma/10000)**0.5) * math.sin(hue * math.pi / 18000) for chroma, hue, _ in colors]
+    xys = numpy.array([xs, ys])
+    indices = minimum_energy_placement(xys, n)
+    return [colors[idx] for idx in indices]
