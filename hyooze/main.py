@@ -26,56 +26,41 @@ for grey in greys:
 
 df = pandas.DataFrame(data=colors, columns=["brightness", "chroma", "hue","hexcode"])
 
-# brightness_thresholds = [0, grey_to_brightness(greys[5], conn), grey_to_brightness(greys[-1], conn)]
-# chroma_quantiles = [0, .1, .5, 1]  # want to separate out the greys
 
-brighter = df[df['brightness'] >= grey_to_brightness(greys[5], conn)]
-brighter_louder = brighter[brighter['chroma'] >= brighter['chroma'].median()]
-brighter_muted = brighter[brighter['chroma'] < brighter['chroma'].median()]
-darker = df[df['brightness'] < grey_to_brightness(greys[5], conn)]
-darker_louder = darker[darker['chroma'] >= darker['chroma'].median()]
-darker_muted = darker[darker['chroma'] < darker['chroma'].median()]
+def svg_elems(colors):
+    # force to correct number of columns
+    h0, h1 = (-180, 180)
+    h_size = h1 - h0
+    r = 20
+    height = 750
+    width = 1500
+    # FIXME: extend by half a column in both directions
+    b0, b1 = (colors['brightness'].min(), colors['brightness'].max())
+    b_size = b1 - b0
+    def scale_brightness(b):
+        return round((width - 2*r) * ((b - b0) / b_size), 2) + r
+    def scale_hue(h):
+        return round((height - 2*r) * ((h - h0) / h_size), 2) + r
+    def row_to_circle(row):
+        (b,_,h,hexcode) = row
+        return f'<circle cx="{scale_brightness(b)}" cy="{scale_hue(h)}" r="{r}" fill="{hexcode}"><title>{hexcode}</title></circle>'
+    return colors.apply(row_to_circle, axis=1)
 
 
-fig = pyplot.figure(figsize=(12, 12))
+print('<html><body>')
 
-axes = fig.add_subplot(2, 2, 1)
-axes.get_xaxis().set_visible(False)
-axes.get_yaxis().set_visible(False)
-axes.set_facecolor('white')
-axes.scatter(
-    darker_louder['brightness'],
-    darker_louder['hue'],
-    c=darker_louder['hexcode'],
-    marker="o"
-)
-axes = fig.add_subplot(2, 2, 2)
-axes.get_xaxis().set_visible(False)
-axes.get_yaxis().set_visible(False)
-axes.set_facecolor('black')
-axes.scatter(
-    brighter_louder['brightness'],
-    brighter_louder['hue'],
-    c=brighter_louder['hexcode'],
-    marker="o"
-)
-axes = fig.add_subplot(2, 2, 3)
-axes.get_xaxis().set_visible(False)
-axes.get_yaxis().set_visible(False)
-axes.set_facecolor('white')
-axes.scatter(
-    darker_muted['brightness'],
-    darker_muted['hue'],
-    c=darker_muted['hexcode'],
-    marker="o"
-)
-axes = fig.add_subplot(2, 2, 4)
-axes.get_xaxis().set_visible(False)
-axes.get_yaxis().set_visible(False)
-axes.set_facecolor('black')
-axes.scatter(
-    brighter_muted['brightness'],
-    brighter_muted['hue'],
-    c=brighter_muted['hexcode'],
-    marker="o"
-)
+chroma_quantiles = [0, .511, 1]
+for c_idx in range(len(chroma_quantiles) - 1):
+    c_min = df['chroma'].quantile(chroma_quantiles[c_idx])
+    c_max = df['chroma'].quantile(chroma_quantiles[c_idx + 1])
+    colors_matching_both = df[(df['chroma'] >= c_min) & (df['chroma'] <= c_max)]
+    s = '\n'.join(svg_elems(colors_matching_both).tolist())
+    svg = f'''<svg width="1500" height="750">
+        <rect width="50%" height="100%" fill="white"></rect>
+        <rect x="50%" width="50%" height="100%" fill="black"></rect>
+        {s}
+        </svg>'''
+    print(svg)
+    print()
+print('</body></html>')
+# FIXME: show greys, too
