@@ -17,16 +17,17 @@ def best_replacment(neighbor, xys, whole_field):
     best_neighbor = numpy.argmin(rest_of_field)
     return best_neighbor
 
-def minimum_energy_placement(xys, n):
+def minimum_energy_placement(xys, n, baseline_energy):
     '''
-    >>> xys = array([[0.1, 0, 1], [0, 0, 1]])
-    >>> set(find_happy_neighbors(xys, 2))
+    >>> xys = numpy.array([[0.1, 0, 1], [0, 0, 1]])
+    >>> set(minimum_energy_placement(xys, 2))
     {1, 2}
-    >>> set(find_happy_neighbors(xys, 3))
+    >>> set(minimum_energy_placement(xys, 3))
     {0, 1, 2}
     '''
     current = list(range(n))
     whole_field = numpy.sum([field_for_neighbor(neighbor, xys) for neighbor in current], axis=0)
+    whole_field += baseline_energy
     updated = True
     while updated:
         updated = False
@@ -41,12 +42,12 @@ def minimum_energy_placement(xys, n):
     return current
 
 def select_colors(brightness, n, conn):
-    colors = conn.execute('''select chroma / 100, hue, hexcode from color_view where
+    colors = conn.execute('''select chroma / 100, hue / 100, hexcode from color_view where
       (brightness between ? * 0.997 and ? * 1.003)''', 
         [brightness, brightness]).fetchall()
-
-    xs = [((chroma/10000)**0.5) * math.cos(hue * math.pi / 180) for chroma, hue, _ in colors]
-    ys = [((chroma/10000)**0.5) * math.sin(hue * math.pi / 180) for chroma, hue, _ in colors]
+    grey_idx = min(range(len(colors)), key=lambda i: colors[i][0])
+    xs = [((chroma)**0.5) * math.cos(hue * math.pi / 180) for chroma, hue, _ in colors]
+    ys = [((chroma)**0.5) * math.sin(hue * math.pi / 180) for chroma, hue, _ in colors]
     xys = numpy.array([xs, ys])
-    indices = minimum_energy_placement(xys, n)
+    indices = minimum_energy_placement(xys, n, field_for_neighbor(grey_idx, xys) * n/3.)
     return [colors[idx] for idx in indices]
