@@ -11,6 +11,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.4; max-width: 800px; margin: 20px auto; padding: 0 10px; background: #fff; text-rendering: optimizeLegibility
         }
+        pre {font-family:'Courier New', Courier, monospace; display: inline;}
         h1 { font-size: 2.2em; margin-top: 0 }
         h1, h2, h3, h4, h5, h6 { margin-bottom: 12px }
         h1, h2, h3, h4, h5, h6, b, strong, th { font-weight: 600 }
@@ -43,45 +44,34 @@
             <img src="loud-palette.svg" alt="34 saturated colors">
         </div>
         <h2>Why does this matter?</h2>
-        Color brightness controls the legibility of text. But it is difficult to
+        Color contrast ratio -- derived from the brightness of the foreground
+        and background -- controls the legibility of text. But brightness is
+        difficult to
         calculate. Mistakes result in illegible text, and make reading
         inaccurate, uncomfortable, and slow.
         <br><br>
-        With this palette, an application designer can change colors for other
-        concerns without risking a loss of legibility.
-        <br><br>
-        <details style="display: block; margin: 0 auto; width: 50%;">
-            <summary>What else is color useful for?</summary>
-            <ul>
-                <li> Building an <a
-                        href=https://colorusage.arc.nasa.gov/Percept_layers_1.php>attention
-                        hierarchy</a></li>
-                <li> Conveying semantic meaning</li>
-                <li> Adding boundary hints (zebra striping, syntax
-                    highlighting)</li>
-                <li> Providing non-spatial grouping (parameters)</li>
-            </ul>
-        </details>
+        This color palette makes it easy for an application designer to choose
+        colors without risking a loss of legibility. Choose a grey that works,
+        and all colors in the same column will be equally readable.
 
 
         <h2>Why is brightness hard to compute?</h2>
         Most computer monitors have a red, a green, and a blue rectangular
         subpixel in each square pixel. Each of these can be activated to any
         level from 0 through 255. The RGB colorspace corresponds to this
-        mechanical detail. A hexadecimal color code like #0080FF represents zero
+        mechanical detail. A hexadecimal color code like <pre>#0080FF</pre> represents zero
         activation of red, 128 (from the 80 in hexadecimal) activation of green,
         and 255 (from the FF in hexadecimal) activation of blue. While
         convenient for the computer, this colorspace doesn't correspond to
         any aspect of human perception.
         <br><br>
 
-        <text style="font-weight: bold; background-color: #00FF00; color:
+        <text style="background-color: #00FF00; color:
             #0000FF;">
-            Lime (#00FF00) is much brighter than Blue (#0000FF)
-        </text>
-        , which is surprising from the hexcodes in isolation. We are not
+            Lime (<pre>#00FF00</pre>) is much brighter than Blue (<pre>#0000FF</pre>)</text>, which is
+        surprising from the hexcodes in isolation. We are not
         interested in physical intensity of light, but in brightness as a
-        "perceptual correlate". Perceptual correlates are derived from
+        <em>perceptual correlate</em>. Perceptual correlates are derived from
         experimental data (participants are asked to judge which of two colors
         is brighter, for example). Color scientists write as clear models as
         they can to fit the data, but the underlying system is biological and
@@ -94,7 +84,7 @@
         uniform space**. From there, we just have to translate what we want into
         mathematical constraints.
         <br><br>
-        We want large and predictable contrast ratios***. Our colors will be on
+        We want large and predictable contrast ratios. Our colors will be on
         contours of equal brightness, which are spaced evenly on a logarithmic
         scale. This way, the constrast ratio of any two colors in our palette is
         set by the number of brightness contours between them. Each of these
@@ -106,22 +96,15 @@
         </ul>
         We want a broad palette of chromas and hues. Within each brightness
         contour, our colors should be spaced out with many saturated colors and
-        some unsaturated colors. To do this, we convert to a metric space, and
-        select points minimizing an imaginary energy field.
+        some unsaturated colors. To do this, we select points minimizing the
+        energy of a repulsive force field.
         <br><br>
-
         <!-- notes -->
-        * This library is unmaintained! If you find it (or this page) useful,
-        please consider sponsoring a temporary maintainer!
-        <br>
-        <br>
-        ** I chose CIECAM02, but ideally would have a model for luminous colors
+        * I chose CIECAM02, but ideally would have a model for luminous colors
         instead of dyes.
         <ul>
             <li>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2659800/</li>
             <li>https://www.jstage.jst.go.jp/article/transfun/E100.A/2/E100.A_565/_article</li>
             <li>https://www.osapublishing.org/josaa/fulltext.cfm?uri=josaa-35-12-2000&id=401230</li>
         </ul>
-        *** Contrast ratio measures the change in brightness between foreground
-        and background, determining how legible a pair of colors is.
     </body>
