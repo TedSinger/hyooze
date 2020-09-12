@@ -12,7 +12,7 @@ def field_for_neighbor(neighbor, xys):
     return field
 
 def best_replacment(neighbor, xys, whole_field):
-    this_field = field_for_neighbor(neighbor, xys) # should pass this in instead of recomputing it. or cache? tried a cache but it was buggy
+    this_field = field_for_neighbor(neighbor, xys)
     rest_of_field = numpy.subtract(whole_field, this_field, out=this_field)
     best_neighbor = numpy.argmin(rest_of_field)
     return best_neighbor
@@ -31,7 +31,6 @@ def minimum_energy_placement(xys, n, baseline_energy):
     updated = True
     while updated:
         updated = False
-        # would like to prioritize indices that have recently changed
         for idx, neighbor in enumerate(current):
             replacement = best_replacment(neighbor, xys, whole_field)
             if replacement != neighbor:
