@@ -1,14 +1,14 @@
 import math
 SUBPIXELS = ('red','green','blue')
 
-def max_chroma_boundary(target_brightness, conn):
+def max_chroma_boundary(target_lightness, conn):
     faces = [f'({c1} = 0 or {c1} = 255)' for c1 in SUBPIXELS]
     sides = []
     for face in faces:
         sides.extend(conn.execute(
-            f'select chroma, hue from color_view where {face} and (brightness between ? * 0.99 and ? * 1.01)', [target_brightness, target_brightness]
+            f'select greenred, blueyellow from color where {face} and (brightness between ? * 0.99 and ? * 1.01)', [target_lightness, target_lightness]
         ).fetchall())
-    return sorted(sides, key=lambda chroma_hue: chroma_hue[1])
+    return sorted(sides, key=lambda gr_by: math.atan(gr_by[1] / gr_by[0]))
 
 def chroma_area(boundary):
     area = 0

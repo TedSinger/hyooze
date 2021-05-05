@@ -40,13 +40,11 @@ def minimum_energy_placement(xys, n, baseline_energy):
                 updated = True
     return current
 
-def select_colors(brightness, n, conn):
-    colors = conn.execute('''select chroma / 100, hue / 100, hexcode from color_view where
-      (brightness between ? * 0.997 and ? * 1.003)''', 
-        [brightness, brightness]).fetchall()
+def select_colors(lightness, n, conn):
+    colors = conn.execute('''select greenred, blueyellow, hexcode from color where
+      (lightness between ? * 0.997 and ? * 1.003)''',
+        [lightness, lightness]).fetchall()
     grey_idx = min(range(len(colors)), key=lambda i: colors[i][0])
-    xs = [((chroma)**0.5) * math.cos(hue * math.pi / 180) for chroma, hue, _ in colors]
-    ys = [((chroma)**0.5) * math.sin(hue * math.pi / 180) for chroma, hue, _ in colors]
-    xys = numpy.array([xs, ys])
+    xys = list(zip(*colors))[:2]
     indices = minimum_energy_placement(xys, n, field_for_neighbor(grey_idx, xys) * n/3.)
     return [colors[idx] for idx in indices]

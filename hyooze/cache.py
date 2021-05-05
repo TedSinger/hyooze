@@ -1,28 +1,28 @@
 import sqlite3
-
-# FIXME: drop the floats from the view, but rename cbh columns to 'chroma_619' and such
-# hue range should be +/- 32728/180
+import numpy
+import colorio
 
 INIT = '''
 create table if not exists __color (
     red unsigned int1 not null,
     green unsigned int1 not null,
     blue unsigned int1 not null,
-    chroma unsigned int2 not null,
-    brightness unsigned int2 not null,
-    hue signed int2 not null,
+    lightness unsigned int2 not null,
+    greenred signed int2 not null,
+    blueyellow signed int2 not null,
     primary key(red asc, green asc, blue asc)
 ) without rowid;
 '''
 VIEW = '''
 create view if not exists color as
-select red, green, blue, chroma / 619.0, brightness / 375.0, hue / 100.0, printf('#%02X%02X%02X', red, green, blue) as "hexcode" from color;
+select red, green, blue, lightness, greenred, blueyellow, printf('#%02X%02X%02X', red, green, blue) as "hexcode" from __color;
 '''
 INDEX = '''
-create index rgb on color(red, green, blue);
+create index rgb on __color(red, green, blue);
+create index light on __color(lightness);
 '''
 def get_conn():
-    conn = sqlite3.connect('/home/ted/Sync/code/python/hyooze/cache.db')
+    conn = sqlite3.connect('/home/ted/Sync/code/python/hyooze/oklab.db')
     conn.execute(INIT)
     conn.execute(VIEW)
     # conn.execute(INDEX)
@@ -30,37 +30,29 @@ def get_conn():
     return conn
 
 def insert_many(conn, rows):
-    conn.executemany('''insert into colors (red, green, blue, chroma, brightness, hue) values (?,?,?,?,?,?)''', rows)
+    conn.executemany('''insert into __color (red, green, blue, lightness, greenred, blueyellow) values (?,?,?,?,?,?)''', rows)
     conn.commit()
-
-def get_starting_point(conn):
-    sql = '''with max_red as (select max(red) as "red" from colors),
-            max_green as (select max(green) as "green" from colors, max_red where colors.red = max_red.red)
-       select max_red.red, max_green.green, max(blue) as "blue" from colors, max_red, max_green where colors.green = max_green.green and colors.red = max_red.red'''
-    cursor = conn.execute(sql)
-    return cursor.fetchone()
 
 
 if __name__ == '__main__':
-    from hyooze.perception import BRIGHT_OFFICE
     conn = get_conn()
 
-    colors = [(r, g, b) for r in range(256) for g in range(256) for b in range(256)]
-    start = get_starting_point(conn)
-    if start == (None, None, None):
-        start_idx = 0
-    else:
-        start_idx = colors.index(start) + 1
+    rgbs = numpy.array([(r, g, b) for r in range(256) for g in range(256) for b in range(256)]).T
+    oklabs = colorio.cs.OKLAB().from_rgb255(rgbs)
 
-    CHUNK_SIZE = 2000
-    while True:
-        chunk = []
-        for i in range(start_idx, min(start_idx + CHUNK_SIZE, len(colors))):
-            r,g,b = colors[i]
-            chunk.append([r,g,b,*BRIGHT_OFFICE.rgb_to_cbh(r,g,b)]) # need to divide and round!!
-        if len(chunk) == 0:
-            break
-        else:
-            print(f'inserting from {colors[start_idx]}) {len(chunk)}')
-            insert_many(conn, chunk)
-            start_idx += CHUNK_SIZE
+    extremes = numpy.max([
+                    oklabs.max(axis=1), 
+                    abs(oklabs.min(axis=1))],
+                axis=0)
+    # lightness is non-negative. we want to scale that to an unsigned int2, and the others to a signed int2
+    scalings = numpy.array([2**16-1, 2**15-1, 2**15-1]) / extremes
+
+    scaled_oklabs = (scalings.reshape(3,1) * oklabs).round(0).astype(int)
+
+    inserts = numpy.concatenate([rgbs, scaled_oklabs])
+    for chunk_idx in range(256):
+        chunk_start = chunk_idx * 256 * 256
+        chunk_end = (chunk_idx + 1) * 256 * 256
+        chunk = inserts[:,chunk_start:chunk_end]
+        print(chunk_idx)
+        insert_many(conn, chunk.T.tolist())
