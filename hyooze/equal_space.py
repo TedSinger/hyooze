@@ -5,9 +5,9 @@ def field_for_neighbor(neighbor, xys):
     square_diffs = numpy.zeros_like(xys)
     numpy.subtract(xys, numpy.array([xys[:,neighbor]]).T, out=square_diffs)
     numpy.multiply(square_diffs, square_diffs, out=square_diffs)
-    field = numpy.sum(square_diffs, axis=0)
+    field = numpy.sum(square_diffs, axis=0).astype(float)
     numpy.power(field, 2, out=field)
-    numpy.add(field, 0.0001, out=field)
+    numpy.add(field, 1, out=field)
     numpy.divide(1, field, out=field)
     return field
 
@@ -44,7 +44,7 @@ def select_colors(lightness, n, conn):
     colors = conn.execute('''select greenred, blueyellow, hexcode from color where
       (lightness between ? * 0.997 and ? * 1.003)''',
         [lightness, lightness]).fetchall()
-    grey_idx = min(range(len(colors)), key=lambda i: colors[i][0])
-    xys = list(zip(*colors))[:2]
+    grey_idx = min(range(len(colors)), key=lambda i: colors[i][0]**2 + colors[i][1]**2)
+    xys = numpy.array(list(zip(*colors))[:2]) / 2**8
     indices = minimum_energy_placement(xys, n, field_for_neighbor(grey_idx, xys) * n/3.)
     return [colors[idx] for idx in indices]
