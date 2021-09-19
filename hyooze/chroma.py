@@ -8,7 +8,7 @@ def max_chroma_boundary(target_lightness, conn):
     sides = []
     for face in faces:
         sides.extend(conn.execute(
-            f'select greenred, blueyellow from color where {face} and (lightness between ? * 0.99 and ? * 1.01)', [target_lightness, target_lightness]
+            f'select greenred, blueyellow from color where {face} and (lightness between ? * 0.98 and ? * 1.02)', [target_lightness, target_lightness]
         ).fetchall())
     chroma_hues = [(abs(gr + 1j * by), numpy.angle(gr + 1j * by)) for gr, by in sides]
     return sorted(chroma_hues, key=lambda c_h: c_h[1])

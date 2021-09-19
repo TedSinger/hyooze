@@ -18,6 +18,7 @@ def best_replacment(neighbor, xys, whole_field):
     return best_neighbor
 
 def minimum_energy_placement(xys, n, baseline_energy):
+    # FIXME: broken doctest
     '''
     >>> xys = numpy.array([[0.1, 0, 1], [0, 0, 1]])
     >>> set(minimum_energy_placement(xys, 2))
@@ -42,7 +43,7 @@ def minimum_energy_placement(xys, n, baseline_energy):
 
 def select_colors(lightness, n, conn):
     colors = conn.execute('''select greenred, blueyellow, hexcode from color where
-      (lightness between ? * 0.997 and ? * 1.003)''',
+      (lightness between ? * 0.98 and ? * 1.02)''',
         [lightness, lightness]).fetchall()
     grey_idx = min(range(len(colors)), key=lambda i: colors[i][0]**2 + colors[i][1]**2)
     xys = numpy.array(list(zip(*colors))[:2]) / 2**8
