@@ -1,0 +1,202 @@
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">
+    <style type="text/css">
+    circle:hover {transform: scaleX(2.5);}
+    </style>
+    <g>
+        <rect width="50%" height="100%" fill="white"><title>muted</title></rect>
+        <rect x="50%" width="50%" height="100%" fill="black"><title>muted</title></rect>
+        <rect width="100%" height="100%" fill="none" stroke="#888888" stroke-width="2px"></rect>
+    <circle cx="180.0" 
+        cy="185.42" r="10" fill="#B75900" stroke="white"
+        style="transform-origin: 180px 185px">
+        <title>#B75900</title>
+        </circle>
+<circle cx="180.0" 
+        cy="96.58" r="10" fill="#6A61C6" stroke="white"
+        style="transform-origin: 180px 96px">
+        <title>#6A61C6</title>
+        </circle>
+<circle cx="300.0" 
+        cy="29.9" r="10" fill="#00DBDC" stroke="black"
+        style="transform-origin: 300px 29px">
+        <title>#00DBDC</title>
+        </circle>
+<circle cx="260.0" 
+        cy="131.04000000000002" r="10" fill="#CE7AC5" stroke="black"
+        style="transform-origin: 260px 131px">
+        <title>#CE7AC5</title>
+        </circle>
+<circle cx="220.0" 
+        cy="238.14" r="10" fill="#849900" stroke="black"
+        style="transform-origin: 220px 238px">
+        <title>#849900</title>
+        </circle>
+<circle cx="100.0" 
+        cy="255.29" r="10" fill="#006000" stroke="white"
+        style="transform-origin: 100px 255px">
+        <title>#006000</title>
+        </circle>
+<circle cx="60.0" 
+        cy="167.0" r="10" fill="#74000A" stroke="white"
+        style="transform-origin: 60px 167px">
+        <title>#74000A</title>
+        </circle>
+<circle cx="100.0" 
+        cy="75.43" r="10" fill="#0049A3" stroke="white"
+        style="transform-origin: 100px 75px">
+        <title>#0049A3</title>
+        </circle>
+<circle cx="260.0" 
+        cy="95.38" r="10" fill="#908CFF" stroke="black"
+        style="transform-origin: 260px 95px">
+        <title>#908CFF</title>
+        </circle>
+<circle cx="60.0" 
+        cy="140.44" r="10" fill="#6B004C" stroke="white"
+        style="transform-origin: 60px 140px">
+        <title>#6B004C</title>
+        </circle>
+<circle cx="300.0" 
+        cy="222.0" r="10" fill="#DCC000" stroke="black"
+        style="transform-origin: 300px 222px">
+        <title>#DCC000</title>
+        </circle>
+<circle cx="220.0" 
+        cy="154.67" r="10" fill="#D5607C" stroke="black"
+        style="transform-origin: 220px 154px">
+        <title>#D5607C</title>
+        </circle>
+<circle cx="140.0" 
+        cy="101.98" r="10" fill="#6649B8" stroke="white"
+        style="transform-origin: 140px 101px">
+        <title>#6649B8</title>
+        </circle>
+<circle cx="300.0" 
+        cy="144.04000000000002" r="10" fill="#FF8AC3" stroke="black"
+        style="transform-origin: 300px 144px">
+        <title>#FF8AC3</title>
+        </circle>
+<circle cx="260.0" 
+        cy="238.07" r="10" fill="#9BB300" stroke="black"
+        style="transform-origin: 260px 238px">
+        <title>#9BB300</title>
+        </circle>
+<circle cx="260.0" 
+        cy="64.36" r="10" fill="#00A5FF" stroke="black"
+        style="transform-origin: 260px 64px">
+        <title>#00A5FF</title>
+        </circle>
+<circle cx="300.0" 
+        cy="195.79" r="10" fill="#FF9C00" stroke="black"
+        style="transform-origin: 300px 195px">
+        <title>#FF9C00</title>
+        </circle>
+<circle cx="260.0" 
+        cy="268.14" r="10" fill="#00C385" stroke="black"
+        style="transform-origin: 260px 268px">
+        <title>#00C385</title>
+        </circle>
+<circle cx="340.0" 
+        cy="22.48" r="10" fill="#00FFE9" stroke="black"
+        style="transform-origin: 340px 22px">
+        <title>#00FFE9</title>
+        </circle>
+<circle cx="180.0" 
+        cy="123.3" r="10" fill="#9C4BAF" stroke="white"
+        style="transform-origin: 180px 123px">
+        <title>#9C4BAF</title>
+        </circle>
+<circle cx="140.0" 
+        cy="255.29" r="10" fill="#007800" stroke="white"
+        style="transform-origin: 140px 255px">
+        <title>#007800</title>
+        </circle>
+<circle cx="20.0" 
+        cy="80.19" r="10" fill="#00007B" stroke="white"
+        style="transform-origin: 20px 80px">
+        <title>#00007B</title>
+        </circle>
+<circle cx="60.0" 
+        cy="117.57" r="10" fill="#58007B" stroke="white"
+        style="transform-origin: 60px 117px">
+        <title>#58007B</title>
+        </circle>
+<circle cx="340.0" 
+        cy="222.64" r="10" fill="#FDDF00" stroke="black"
+        style="transform-origin: 340px 222px">
+        <title>#FDDF00</title>
+        </circle>
+<circle cx="100.0" 
+        cy="169.05" r="10" fill="#970000" stroke="white"
+        style="transform-origin: 100px 169px">
+        <title>#970000</title>
+        </circle>
+<circle cx="220.0" 
+        cy="180.63" r="10" fill="#E26000" stroke="black"
+        style="transform-origin: 220px 180px">
+        <title>#E26000</title>
+        </circle>
+<circle cx="100.0" 
+        cy="147.65" r="10" fill="#900051" stroke="white"
+        style="transform-origin: 100px 147px">
+        <title>#900051</title>
+        </circle>
+<circle cx="140.0" 
+        cy="76.89" r="10" fill="#0057D1" stroke="white"
+        style="transform-origin: 140px 76px">
+        <title>#0057D1</title>
+        </circle>
+<circle cx="300.0" 
+        cy="267.02" r="10" fill="#00E396" stroke="black"
+        style="transform-origin: 300px 267px">
+        <title>#00E396</title>
+        </circle>
+<circle cx="60.0" 
+        cy="96.99" r="10" fill="#3B009E" stroke="white"
+        style="transform-origin: 60px 96px">
+        <title>#3B009E</title>
+        </circle>
+<circle cx="180.0" 
+        cy="255.29" r="10" fill="#009000" stroke="white"
+        style="transform-origin: 180px 255px">
+        <title>#009000</title>
+        </circle>
+<circle cx="220.0" 
+        cy="73.38" r="10" fill="#0082FF" stroke="black"
+        style="transform-origin: 220px 73px">
+        <title>#0082FF</title>
+        </circle>
+<circle cx="220.0" 
+        cy="93.25" r="10" fill="#736DFF" stroke="black"
+        style="transform-origin: 220px 93px">
+        <title>#736DFF</title>
+        </circle>
+<circle cx="220.0" 
+        cy="131.34" r="10" fill="#CA54BF" stroke="black"
+        style="transform-origin: 220px 131px">
+        <title>#CA54BF</title>
+        </circle>
+<circle cx="300.0" 
+        cy="243.29" r="10" fill="#A0D600" stroke="black"
+        style="transform-origin: 300px 243px">
+        <title>#A0D600</title>
+        </circle>
+<circle cx="100.0" 
+        cy="128.5" r="10" fill="#810084" stroke="white"
+        style="transform-origin: 100px 128px">
+        <title>#810084</title>
+        </circle>
+    </g>
+    <script type="text/javascript"><![CDATA[
+        var circles = document.getElementsByTagName('circle');
+        for (i = 0; i < circles.length; i++) {
+            circle = circles[i];
+            circle.onclick = function () {
+                let text = circle.childNodes[1].textContent;
+                navigator.clipboard.writeText(text);
+                console.log(text)
+            }
+        }
+    ]]></script>
+    </svg>

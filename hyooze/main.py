@@ -7,7 +7,8 @@ from matplotlib import pyplot
 import math
 import numpy
 import pandas
-from hyooze.display import svg_template, R
+from hyooze.display import write_svgs
+from dataclasses import dataclass
 
 def graph(lightness, selected, grey, conn):
     rows = conn.execute('''select greenred, blueyellow, hexcode from color where
@@ -29,65 +30,38 @@ def graph(lightness, selected, grey, conn):
         axes.scatter(xs, ys, c='black', marker='o')
 
 
+@dataclass
+class DisplayColor:
+    lightness: float
+    greenred: float
+    blueyellow: float
+    hexcode: str
+    column_index: float
+    @property
+    def chroma(self):
+        # FIXME: cache these
+        return (self.greenred**2 + self.blueyellow**2)**0.5
+    @property
+    def hue_radians(self):
+        return numpy.angle(self.greenred + 1j * self.blueyellow)
+
 conn = get_conn()
 
-greys = fit_greys_between(9, "#000000", "#f7f7f6", conn) + ["#f7f7f6"]
-lightnesses = [grey_to_lightness(grey, conn) for grey in greys]
+grey_hexcodes = fit_greys_between(9, "#000000", "#f9f9f9", conn) + ["#f9f9f9"]
+lightnesses = [grey_to_lightness(grey, conn) for grey in grey_hexcodes]
 colors = []
-
-for idx, (grey, lightness) in enumerate(zip(greys, lightnesses)):
+greys = []
+for idx, (grey, lightness) in enumerate(zip(grey_hexcodes, lightnesses)):
     print(grey)
 
     area = chroma_area(max_chroma_boundary(lightness, conn))
     these_colors = select_colors(lightness, 4 + int(area / 1.2e8), conn)
-    graph(lightness, these_colors, grey, conn)
+    # graph(lightness, these_colors, grey, conn)
     for greenred, blueyellow, hexcode in these_colors:
-        colors.append((lightness, greenred, blueyellow, hexcode, idx / (len(greys) - 1)))
-
-df = pandas.DataFrame(data=colors, columns=["lightness", "greenred", "blueyellow", "hexcode", "column"])
-print('\n'.join([f'<button style="background: {h}; color: {h}">{h}</button>' for h in df['hexcode']]))
-
-# FIXME: recreate svgs
-# name the colors
-# provide css vars or classes?
-
+        colors.append(DisplayColor(lightness, greenred, blueyellow, hexcode, idx / (len(grey_hexcodes) - 1)))
+    greys.append(DisplayColor(lightness, 0, 0, grey, idx / (len(grey_hexcodes) - 1)))
 HEIGHT = 300
-
-image_sources = [
-    [
-        [i / (len(greys) - 1) for i in range(len(greys))],
-        [0] * len(greys),
-        greys,
-        4 * R,
-        "grey-palette.svg"
-    ]
-]
-
-
-chroma_quantiles = [0, 0.333, 0.667, 1]
-chroma_thresholds = df["chroma"].quantile(chroma_quantiles)
-names = ['', "subtle-palette.svg", "muted-palette.svg", "loud-palette.svg"]
-chroma_ranges = list(zip(
-    [0] + chroma_thresholds.tolist(),
-    chroma_thresholds,
-    names
-))[1:]
-
-for c_min, c_max, name in chroma_ranges:
-    subpalette = df[(c_min <= df["chroma"]) & (df["chroma"] <= c_max)]
-    src = [subpalette['column'], subpalette['hue'], subpalette['hexcode'], HEIGHT, name]
-    image_sources.append(src)
-
-text = "<html><body>"
-for src in image_sources:
-    b, h, hexcodes, height, name = src
-    svg = svg_template(b, h, hexcodes, height)
-    with open(name, "w") as f:
-        f.write(svg)
-    text += svg
-    text += "<br> <br>"
-
-text += "</body></html>"
-
-with open("/dev/shm/foo.html", "w") as f:
-    f.write(text)
+write_svgs(colors, greys)
+# FIXME: polish svg/html:
+# advertise clickiness
+# include html table

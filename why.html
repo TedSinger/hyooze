@@ -4,7 +4,7 @@
             shrink-to-fit=no">
         <meta name="author" content="Ted Singer">
         <meta charset="utf-8" />
-        <title>Basic Ergonomic Colors</title>
+        <title>Vivid, Legible Colors</title>
         <style>
         /* github.com/kognise/water.css */
         body {
@@ -24,10 +24,9 @@
     <body>
         <!-- ping andrew somers-->
         <!--https://commandcenter.blogspot.com/2020/09/color-blindness-is-inaccurate-term.html-->
-        <h1>Basic Ergonomic Colors</h1>
+        <h1>Vivid, Legible Colors</h1>
 
-        Here is a palette of colors in columns of equal brightness, with the
-        maximum range of chroma:
+        Start your application design in greyscale and ensure your application is legible. Then you can freely switch any grey to another color in the same column. The brightnesses are the same, so the contrast ratios and legibility will not be compromised.
         <br><br>
         <aside style="display: none;">Each of these four images shows colors
             arranged in columns by brightness, and placed vertically by hue. The
@@ -35,15 +34,22 @@
             hues do not align to any grid. Each image has the darker colors on a
             white background and the lighter colors on a black background</aside>
         <div style="display: block;">
-            <!-- FIXME: tooltips were lost!-->
-            <img src="grey-palette.svg" alt="10 greys">
+            <object type="image/svg+xml" data="grey-palette.svg">
+                <img loading="lazy" src="grey-palette.svg" alt="10 greys">
+            </object>
             <br>
-            <img src="subtle-palette.svg" alt="35 pastel colors">
+            <object type="image/svg+xml" data="pastel-palette.svg">
+                <img loading="lazy" src="pastel-palette.svg" alt="35 pastel colors">
+            </object>
             <br>
-            <img src="muted-palette.svg" alt="34 muted colors">
+            <object type="image/svg+xml" data="muted-palette.svg">
+                <img loading="lazy" src="muted-palette.svg" alt="34 muted colors">
+            </object>
             <br>
-            <img src="loud-palette.svg" alt="34 saturated colors">
+            <object type="image/svg+xml" data="vivid-palette.svg">
+                <img loading="lazy" src="vivid-palette.svg" alt="34 vivid colors">
+            </object>
         </div>
-        <h2>What for?</h2>
-        Start your application design in greyscale and ensure your application is legible. Then you can freely switch any grey to another color in the same column - because the brightnesses are the same, the contrast ratios and legibility will not be compromised.
+        <h2>Details</h2>
+        Adjacent columns have the same WCAG contrast ratio for the grey. Uses the OKLAB color space to determine brightness for other colors. Within each grey level, attempts to equally space out the colors using a minimum "energy" placement.
     </body>
