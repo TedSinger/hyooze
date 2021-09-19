@@ -26,14 +26,16 @@ def row_to_circle(color, height):
 def colors_to_svg(colors, height, title):
     circles = '\n'.join([row_to_circle(color, height) for color in colors])
     js = '''<script type="text/javascript"><![CDATA[
+        function clippify(event) {
+            elem = event.target;
+            text = elem.childNodes[1].textContent;
+            navigator.clipboard.writeText(text);
+            console.log(text);
+        }
         var circles = document.getElementsByTagName('circle');
         for (i = 0; i < circles.length; i++) {
             circle = circles[i];
-            circle.onclick = function () {
-                let text = circle.childNodes[1].textContent;
-                navigator.clipboard.writeText(text);
-                console.log(text)
-            }
+            circle.onclick = clippify;
         }
     ]]></script>'''
 
