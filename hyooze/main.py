@@ -58,10 +58,12 @@ for idx, (grey, lightness) in enumerate(zip(grey_hexcodes, lightnesses)):
     these_colors = select_colors(lightness, 4 + int(area / 1.2e8), conn)
     # graph(lightness, these_colors, grey, conn)
     for greenred, blueyellow, hexcode in these_colors:
-        colors.append(DisplayColor(lightness, greenred, blueyellow, hexcode, idx / (len(grey_hexcodes) - 1)))
-    greys.append(DisplayColor(lightness, 0, 0, grey, idx / (len(grey_hexcodes) - 1)))
-HEIGHT = 300
+        colors.append(DisplayColor(lightness, greenred, blueyellow, hexcode, idx))
+    greys.append(DisplayColor(lightness, 0, 0, grey, idx))
+
 write_svgs(colors, greys)
-# FIXME: polish svg/html:
+# FIXME:
 # advertise clickiness
 # include html table
+# include text demo
+# rotate the svg to rows?

@@ -2,11 +2,24 @@ import math
 h0, h1 = (-math.pi, math.pi)
 h_size = h1 - h0
 R = 10
-width = 400
+WIDTH = 800
+# FIXME: create a ColorDisplayGraph object with the full collection of colors
+# some of these magic constants become derived numbers
+MIN_CHROMA = 6512
+MAX_CHROMA = 36906
+MID_CHROMA = (MIN_CHROMA + MAX_CHROMA) / 2
+CHROMA_SPREAD = MAX_CHROMA - MIN_CHROMA
+N_COLUMNS = 10
+COLUMN_WIDTH = WIDTH / N_COLUMNS
+HEIGHT = 400
 
-
-def scale_width(column):
-    return round((width - 4 * R) * column, 2) + 2 * R
+def scale_width(column, chroma):
+    if chroma < MIN_CHROMA: # center greys, even though they have zero chroma
+        offset = 0
+    else:
+        offset = (COLUMN_WIDTH - 2 * R) * (chroma - MID_CHROMA) / CHROMA_SPREAD
+    column_center = COLUMN_WIDTH * (column + 1/2)
+    return round(column_center + offset, 2)
 
 
 def scale_hue(hue, height):
@@ -14,10 +27,11 @@ def scale_hue(hue, height):
 
 
 def row_to_circle(color, height):
-    cx = scale_width(color.column_index)
+    cx = scale_width(color.column_index, color.chroma)
     cy = scale_hue(color.hue_radians, height)
     return f'''<circle cx="{cx}" 
-        cy="{cy}" r="{R}" fill="{color.hexcode}" stroke="{'black' if color.column_index > 0.5 else 'white'}"
+        cy="{cy}" r="{R}" fill="{color.hexcode}" 
+        stroke="{'black' if color.column_index > 0.5 else 'white'}"
         style="transform-origin: {int(cx)}px {int(cy)}px">
         <title>{color.hexcode}</title>
         </circle>'''
@@ -40,7 +54,7 @@ def colors_to_svg(colors, height, title):
     ]]></script>'''
 
     return f"""
-    <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}">
     <style type="text/css">
     circle:hover {'{transform: scaleX(2.5);}'}
     </style>
@@ -53,18 +67,9 @@ def colors_to_svg(colors, height, title):
     {js}
     </svg>"""
 
-def subpalettes(colors):
-    colors = sorted(colors, key=lambda color: color.chroma)
-    n = round(len(colors) / 3)
-    return [
-        ("pastel", colors[:n]),
-        ("muted", colors[n:2*n]),
-        ("vivid", colors[2*n:]),
-    ]
 
 def write_svgs(colors, greys):
     with open('grey-palette.svg', 'w') as f:
         f.write(colors_to_svg(greys, 4 * R, "greys"))
-    for (title, subp) in subpalettes(colors):
-        with open(f'{title}-palette.svg', 'w') as f:
-            f.write(colors_to_svg(subp, 300, title))
+    with open('color-palette.svg', 'w') as f:
+        f.write(colors_to_svg(colors, HEIGHT, "colors"))

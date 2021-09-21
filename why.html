@@ -26,7 +26,7 @@
         <!--https://commandcenter.blogspot.com/2020/09/color-blindness-is-inaccurate-term.html-->
         <h1>Vivid, Legible Colors</h1>
 
-        Start your application design in greyscale and ensure your application is legible. Then you can freely switch any grey to another color in the same column. The brightnesses are the same, so the contrast ratios and legibility will not be compromised.
+        Start your application design in greyscale and ensure it is legible. Then you can freely switch any grey to another color in the same column. The brightnesses are the same, so the contrast ratios and legibility will not be compromised.
         <br><br>
         <aside style="display: none;">Each of these four images shows colors
             arranged in columns by brightness, and placed vertically by hue. The
@@ -38,18 +38,18 @@
                 <img loading="lazy" src="grey-palette.svg" alt="10 greys">
             </object>
             <br>
-            <object type="image/svg+xml" data="pastel-palette.svg">
-                <img loading="lazy" src="pastel-palette.svg" alt="35 pastel colors">
+            <object type="image/svg+xml" data="color-palette.svg">
+                <img loading="lazy" src="color-palette.svg" alt="107 colors">
             </object>
-            <br>
-            <object type="image/svg+xml" data="muted-palette.svg">
-                <img loading="lazy" src="muted-palette.svg" alt="34 muted colors">
-            </object>
-            <br>
-            <object type="image/svg+xml" data="vivid-palette.svg">
-                <img loading="lazy" src="vivid-palette.svg" alt="34 vivid colors">
-            </object>
+
         </div>
         <h2>Details</h2>
-        Adjacent columns have the same WCAG contrast ratio for the grey. Uses the OKLAB color space to determine brightness for other colors. Within each grey level, attempts to equally space out the colors using a minimum "energy" placement.
+        Adjacent columns have the same WCAG contrast ratio for the grey. Uses the <a href="https://bottosson.github.io/posts/oklab/">OKLAB color space</a> to determine brightness for other colors. Within each grey level, attempts to equally space out the colors using a minimum "energy" placement.
+        <br><br>
+        The contrast ratio of any pair of colors here is determined only by the number of columns between them:
+        <ul>
+            <li>Four apart -> WCAG Level AA requirement for large text</li>
+            <li>Six apart -> Level AA for all text, AAA for large text</li>
+            <li>Seven apart -> Level AAA for all text</li>
+        </ul>
     </body>
