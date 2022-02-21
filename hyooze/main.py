@@ -63,7 +63,6 @@ for idx, (grey, lightness) in enumerate(zip(grey_hexcodes, lightnesses)):
 
 write_svgs(colors, greys)
 # FIXME:
-# advertise clickiness
 # include html table
 # include text demo
-# rotate the svg to rows?
+# rotate the svg to rows on phones?
