@@ -54,7 +54,7 @@ def colors_to_svg(colors, height, title):
     ]]></script>'''
 
     return f"""
-    <svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {height}">
     <style type="text/css">
     circle:hover {'{transform: scaleX(2.5);}'}
     </style>

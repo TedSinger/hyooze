@@ -1,5 +1,5 @@
 
-    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
     <style type="text/css">
     circle:hover {transform: scaleX(2.5);}
     </style>
