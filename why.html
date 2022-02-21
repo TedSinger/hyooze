@@ -25,14 +25,22 @@
         <!-- ping andrew somers-->
         <!--https://commandcenter.blogspot.com/2020/09/color-blindness-is-inaccurate-term.html-->
         <h1>Vivid, Legible Colors</h1>
-
-        Start your application design in greyscale and ensure it is legible. Then you can freely switch any grey to another color in the same column. The brightnesses are the same, so the contrast ratios and legibility will not be compromised.
+        Designers use color systems to ensure their designs are visually consistent and use known-good color combinations. But these color systems have a drawback - they must sacrifice one of these three qualities:
+        <ul>
+            <li>Regimentation - all colors fit into a small number of hue and shade levels</li>
+            <li>Vividness - many highly saturated colors are available</li>
+            <li>Legibility - colors with the same shade level have the same brightness for contrast-ratio calculations</li>
+        </ul>
+        This is because computer colors are clean mathematical objects (sRGB is a cube, HSL is a cylinder), but brightness is a phenomenon of human perception, and very messy.
+        <p>
+        For example, <a href="https://material.io/design/color/the-color-system.html#tools-for-picking-colors">Material Design</a> sacrifices legibility: Yellow 900 is brighter than Indigo 400. See where each gradient switches from black text to white text for a clear demonstration of this.
+        <br>
+        The <a href="https://designsystem.digital.gov/design-tokens/color/overview/">US Web Design System</a> sacrifices vividness. Even their "vivid" color wheel lacks a bright, vivid green, magenta, yellow, and cyan.
+        <p>
+        Here is a color system that sacrifices regimentation, instead. It has legible brightness levels and includes saturated colors of all hues. Start your application design in greyscale and ensure it is readable. Then you can freely switch any grey to another color in the same column. The brightnesses are the same, so the contrast ratios and readability will not be compromised.
         <br><br>
-        <aside style="display: none;">Each of these four images shows colors
-            arranged in columns by brightness, and placed vertically by hue. The
-            result looks haphazard because of empty sections and because the
-            hues do not align to any grid. Each image has the darker colors on a
-            white background and the lighter colors on a black background</aside>
+        <small><i>(Click a color to copy to the clickboard)</i></small>
+        <aside style="display: none;">Ten clumpy columns of colors. A grey is at the top, and colors of the same brightness are below, organized by hue (top to bottom) and saturation (left to right within each column)</aside>
         <div style="display: block;">
             <object type="image/svg+xml" data="grey-palette.svg">
                 <img loading="lazy" src="grey-palette.svg" alt="10 greys">
@@ -44,12 +52,13 @@
 
         </div>
         <h2>Details</h2>
-        Adjacent columns have the same WCAG contrast ratio for the grey. Uses the <a href="https://bottosson.github.io/posts/oklab/">OKLAB color space</a> to determine brightness for other colors. Within each grey level, attempts to equally space out the colors using a minimum "energy" placement.
+        Adjacent columns have the same WCAG contrast ratio for the grey. Uses the <a href="https://bottosson.github.io/posts/oklab/">OKLAB color space</a> to determine brightness for other colors. Within each grey level, attempts to equally space out the colors using a minimum "energy" placement. 
         <br><br>
-        The contrast ratio of any pair of colors here is determined only by the number of columns between them:
+        The contrast ratio of any pair of colors here is determined only by the number of columns between them. Pure black may be considered a zeroth column on the left:
         <ul>
-            <li>Four apart -> WCAG Level AA requirement for large text</li>
+            <li>Four apart (three between) -> WCAG Level AA requirement for large text</li>
             <li>Six apart -> Level AA for all text, AAA for large text</li>
             <li>Seven apart -> Level AAA for all text</li>
         </ul>
+        Note that there are disagreements between the OKLAB brightness calculation and the WCAG one. If in doubt, trust your eyes.
     </body>
